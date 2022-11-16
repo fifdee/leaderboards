@@ -1,26 +1,63 @@
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.views import generic
+
+from leaderboards.forms import LeaderboardForm
+from leaderboards.models import Leaderboard, Score
+from leaderboards_project.utils import get_random_id
 
 
 class Homepage(generic.TemplateView):
     template_name = 'leaderboards/homepage.html'
 
 
-class LeaderboardList(generic.ListView):
-    pass
+class LeaderboardList(LoginRequiredMixin, generic.ListView):
+    template_name = 'leaderboards/leaderboard_list.html'
+
+    def get_queryset(self):
+        return Leaderboard.objects.filter(owner=self.request.user)
 
 
-class LeaderboardDetail(generic.DetailView):
-    pass
+class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
+    template_name = 'leaderboards/leaderboard_detail.html'
+
+    def get_queryset(self):
+        return Leaderboard.objects.filter(owner=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super(LeaderboardDetail, self).get_context_data(**kwargs)
+        context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user, leaderboard=self.get_object())
+        return context
 
 
-class LeaderboardCreate(generic.CreateView):
-    pass
+class LeaderboardCreate(LoginRequiredMixin, generic.CreateView):
+    template_name = 'leaderboards/leaderboard_create.html'
+    form_class = LeaderboardForm
+
+    def form_valid(self, form):
+        leaderboard = form.save(commit=False)
+        leaderboard.owner = self.request.user
+        leaderboard.public_key = get_random_id()
+        leaderboard.private_key = get_random_id()
+        leaderboard.save()
+
+        return redirect('leaderboard-list')
 
 
-class LeaderboardUpdate(generic.UpdateView):
-    pass
+class LeaderboardUpdate(LoginRequiredMixin, generic.UpdateView):
+    template_name = 'leaderboards/leaderboard_update.html'
+    form_class = LeaderboardForm
+
+    def get_queryset(self):
+        return Leaderboard.objects.filter(owner=self.request.user)
 
 
-class LeaderboardDelete(generic.DeleteView):
-    pass
+class LeaderboardDelete(LoginRequiredMixin, generic.DeleteView):
+    template_name = 'leaderboards/leaderboard_delete.html'
+
+    def get_queryset(self):
+        return Leaderboard.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return reverse('leaderboard-list')

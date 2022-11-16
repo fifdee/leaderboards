@@ -20,6 +20,8 @@ from leaderboards.views import Homepage
 
 urlpatterns = [
     path('', Homepage.as_view()),
+    path("__reload__/", include("django_browser_reload.urls")),
+    path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('leaderboards/', include('leaderboards.urls')),
 ]

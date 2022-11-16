@@ -1,0 +1,42 @@
+{% extends 'account/base.html' %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-start">
+        <a href="{% url 'leaderboard-create' %}">
+            <button type="button"
+                    class="btn btn-primary btn-sm mt-3 mx-1">Add
+            </button>
+        </a>
+    </div>
+
+    <ol class="list-group list-group-numbered mt-4">
+        {% for leaderboard in object_list %}
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <a class="text-black text-decoration-none"
+                       {% if not completed %}href="{% url 'leaderboard-detail' leaderboard.pk %}"{% endif %}>
+                        <div class="fw-bold">{{ leaderboard|linebreaks }}</div>
+
+                    </a>
+                </div>
+
+                <div class="d-flex justify-content-end">
+
+                    <div class="">
+                        <small class="mx-3">Modified {{ leaderboard.modified_date|timesince }} ago.</small>
+                    </div>
+
+                    <div class="">
+                        <a href="{% url 'leaderboard-delete' leaderboard.pk %}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Delete</button>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        {% empty %}
+            Create your first leaderboard.
+        {% endfor %}
+    </ol>
+{% endblock %}
+
+

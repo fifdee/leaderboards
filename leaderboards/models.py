@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import pre_save
 
 
 # Create your models here.
@@ -14,10 +15,29 @@ class Leaderboard(models.Model):
     public_key = models.CharField(max_length=30)
     modified_date = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Score(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    player = models.ForeignKey(User, on_delete=models.CASCADE)
     leaderboard = models.ForeignKey(Leaderboard, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     points = models.IntegerField()
     submitted_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.name}: {self.points}'
+
+
+def set_username(sender, instance, **kwargs):
+    email = instance.email
+    username = email[:30]
+    n = 1
+    while User.objects.exclude(pk=instance.pk).filter(username=username).exists():
+        n += 1
+        username = email[:(29 - len(str(n)))] + '-' + str(n)
+    instance.username = username
+
+
+pre_save.connect(set_username, sender=User)

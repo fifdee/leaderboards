@@ -1,0 +1,32 @@
+{% extends 'account/base.html' %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    <a href="{% url 'leaderboard-list' %}">
+        <button type="button"
+                class="btn btn-primary btn-sm mt-3 mx-1">Back
+        </button>
+    </a>
+
+    <ul class="list-group mt-4">
+        <li class="list-group-item">
+            {{ object.name }}
+        </li>
+        <li class="list-group-item">
+            Public key: {{ object.public_key }}
+        </li>
+        <li class="list-group-item">
+            Private key: {{ object.private_key }}
+        </li>
+
+    </ul>
+
+    <ul class="list-group mt-4">
+        {% for score in scores %}
+            <li class="list-group-item">
+                {{ score }}
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
