@@ -5,8 +5,8 @@ from leaderboards.views import LeaderboardList, LeaderboardDetail, LeaderboardCr
 
 urlpatterns = [
     path('', LeaderboardList.as_view(), name='leaderboard-list'),
-    path('', LeaderboardDetail.as_view(), name='leaderboard-detail'),
-    path('', LeaderboardCreate.as_view(), name='leaderboard-create'),
-    path('', LeaderboardUpdate.as_view(), name='leaderboard-update'),
-    path('', LeaderboardDelete.as_view(), name='leaderboard-delete'),
+    path('detail/<int:pk>/', LeaderboardDetail.as_view(), name='leaderboard-detail'),
+    path('create/', LeaderboardCreate.as_view(), name='leaderboard-create'),
+    path('update/<int:pk>/', LeaderboardUpdate.as_view(), name='leaderboard-update'),
+    path('delete/<int:pk>/', LeaderboardDelete.as_view(), name='leaderboard-delete'),
 ]
