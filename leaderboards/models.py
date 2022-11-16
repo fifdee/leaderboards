@@ -9,6 +9,7 @@ class User(AbstractUser):
 
 class Leaderboard(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=30)
     private_key = models.CharField(max_length=30)
     public_key = models.CharField(max_length=30)
     modified_date = models.DateTimeField(auto_now=True)
