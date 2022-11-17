@@ -8,25 +8,61 @@
         </button>
     </a>
 
-    <ul class="list-group mt-4">
-        <li class="list-group-item">
-            {{ object.name }}
-        </li>
-        <li class="list-group-item">
-            Public key: {{ object.public_key }}
-        </li>
-        <li class="list-group-item">
-            Private key: {{ object.private_key }}
-        </li>
+    <h3 class="mt-3">{{ object.name }}</h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Key</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">1</th>
+            <td>Public key</td>
+            <td>{{ object.public_key }}</td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Private key</td>
+            <td>{{ object.private_key }}</td>
+        </tr>
+        <tr>
+        </tr>
+        </tbody>
+    </table>
 
-    </ul>
+    <h4 class="mt-3">Scores:</h4>
 
-    <ul class="list-group mt-4">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nickname</th>
+            <th scope="col">Points</th>
+            <th scope="col">Time</th>
+            <th scope="col">Player ID</th>
+        </tr>
+        </thead>
+        <tbody>
         {% for score in scores %}
-            <li class="list-group-item">
-                {{ score }}
-            </li>
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ score.name }}</td>
+                <td>{{ score.points }}</td>
+                <td>{{ score.submitted_date|timesince }} ago</td>
+                <td>{{ score.player_id }}</td>
+                <td></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5">No scores for this leaderboard yet!</td>
+            </tr>
         {% endfor %}
-    </ul>
+        <tr>
+        </tr>
+        </tbody>
+    </table>
 
 {% endblock %}

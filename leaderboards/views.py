@@ -27,7 +27,8 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LeaderboardDetail, self).get_context_data(**kwargs)
-        context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user, leaderboard=self.get_object())
+        context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user,
+                                                 leaderboard=self.get_object()).order_by('-points')
         return context
 
 
@@ -61,3 +62,13 @@ class LeaderboardDelete(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse('leaderboard-list')
+
+
+class ScoreAdd(generic.View):
+    def get(self, request):
+        print(request.GET)
+        return redirect('leaderboard-list')
+
+    def post(self, request):
+        print(request.POST)
+        return redirect('leaderboard-list')

@@ -20,11 +20,11 @@ class Leaderboard(models.Model):
 
 
 class Score(models.Model):
-    player = models.ForeignKey(User, on_delete=models.CASCADE)
     leaderboard = models.ForeignKey(Leaderboard, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     points = models.IntegerField()
-    submitted_date = models.DateTimeField(auto_now_add=True)
+    submitted_date = models.DateTimeField(auto_now=True)
+    player_id = models.CharField(max_length=30)
 
     def __str__(self):
         return f'{self.name}: {self.points}'
