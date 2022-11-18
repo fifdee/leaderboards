@@ -15,18 +15,73 @@
             <th scope="col">#</th>
             <th scope="col">Key</th>
             <th scope="col">Value</th>
+            <th scope="col">Description</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
         <tr>
             <th scope="row">1</th>
             <td>Public key</td>
-            <td>{{ object.public_key }}</td>
+            <td><b>{{ object.public_key }}</b></td>
+            <td>Used to retrieve scores</td>
+            <td>
+                <div class="d-flex">
+                    <a href="{% url 'score-list' object.public_key %}" class="">
+                        <button type="submit" class="btn btn-outline-primary">Html</button>
+                    </a>
+                    <a href="{% url 'api:scores' object.public_key %}">
+                        <button type="submit" class="btn btn-outline-primary">Json</button>
+                    </a>
+                </div>
+            </td>
         </tr>
         <tr>
             <th scope="row">2</th>
             <td>Private key</td>
-            <td>{{ object.private_key }}</td>
+            <td><b>{{ object.private_key }}</b></td>
+            <td>Used to submit scores</td>
+            <td>
+                <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#submitModal">How to submit
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="submitModal" tabindex="-1" aria-labelledby="submitModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="submitModalLabel">How to submit scores</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>To submit a score you should make a 'POST' request.</p>
+                                <p>Required parameters are:</p>
+                                <ul>
+                                    <li>leaderboard_private_key</li>
+                                    <li>player_name</li>
+                                    <li>points</li>
+                                </ul>
+                                <p>Example JSON (application/json) POST request body: </p>
+                                <code>
+                                    {
+                                    "leaderboard_private_key": "{{ object.private_key }}",
+                                    "player_name": "John Doe",
+                                    "points": 523123
+                                    }
+                                </code>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
         </tr>
         <tr>
         </tr>

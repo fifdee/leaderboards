@@ -18,12 +18,14 @@
 </head>
 <body>
 
-{% include 'navbar.html' %}
+{% if not hide_navbar %}
+    {% include 'navbar.html' %}
+{% endif %}
 
 <div class="container-fluid">
     <div class="row">
         <div class="col"></div>
-        <div class="col-sm-8 col-md-6 border-top">
+        <div class="col-md-8 border-top">
             {% block content %}
             {% endblock %}
         </div>

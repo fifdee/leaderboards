@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'leaderboards.apps.LeaderboardsConfig',
 ]
 
+# TODO use persitent cache (redis, ... ?)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",

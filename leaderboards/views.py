@@ -62,3 +62,20 @@ class LeaderboardDelete(LoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse('leaderboard-list')
+
+
+class ScoreList(generic.ListView):
+    template_name = 'leaderboards/score_list.html'
+    context_object_name = 'scores'
+
+    def get_queryset(self):
+        return Score.objects.filter(leaderboard__public_key=self.kwargs['public_key'])
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(ScoreList, self).get_context_data(*args, **kwargs)
+        context['hide_navbar'] = True
+        try:
+            context['leaderboard'] = Leaderboard.objects.get(public_key=self.kwargs['public_key'])
+        except Exception as e:
+            print(e)
+        return context

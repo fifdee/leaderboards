@@ -12,8 +12,8 @@ class User(AbstractUser):
 class Leaderboard(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
-    private_key = models.CharField(max_length=30)
-    public_key = models.CharField(max_length=30)
+    private_key = models.CharField(max_length=50)
+    public_key = models.CharField(max_length=50)
     modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -22,10 +22,10 @@ class Leaderboard(models.Model):
 
 class Score(models.Model):
     leaderboard = models.ForeignKey(Leaderboard, on_delete=models.CASCADE)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=20)
     points = models.IntegerField()
     submitted_date = models.DateTimeField(auto_now=True)
-    player_id = models.CharField(max_length=30)
+    player_id = models.CharField(max_length=50)
 
     def __str__(self):
         return f'{self.name}: {self.points}'

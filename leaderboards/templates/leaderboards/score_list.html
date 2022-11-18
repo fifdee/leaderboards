@@ -1,0 +1,40 @@
+{% extends 'account/base.html' %}
+
+{% block content %}
+    {% if leaderboard %}
+        <h3 class="mt-3">{{ leaderboard }} </h3>
+        <h4 class="mt-3">Scores:</h4>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nickname</th>
+                <th scope="col">Points</th>
+                <th scope="col">Time</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for score in scores %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ score.name }}</td>
+                    <td>{{ score.points }}</td>
+                    <td>{{ score.submitted_date|timesince }} ago</td>
+                    <td></td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No scores for this leaderboard yet!</td>
+                </tr>
+            {% endfor %}
+            <tr>
+            </tr>
+            </tbody>
+        </table>
+    {% else %}
+        <div class="d-flex justify-content-center">
+            <h3 class="mt-3 border-bottom">Leaderboard with provided public key does not exist!</h3>
+        </div>
+    {% endif %}
+{% endblock %}

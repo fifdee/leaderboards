@@ -1,10 +1,13 @@
+from datetime import date
+from typing import List
+
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI, Schema
 
 from leaderboards.models import Score, Leaderboard
 from leaderboards_project.utils import get_random_id
 
-api = NinjaAPI()
+api = NinjaAPI(urls_namespace='api')
 
 
 class ScoreIn(Schema):
@@ -13,8 +16,14 @@ class ScoreIn(Schema):
     points: int
 
 
+class ScoreOut(Schema):
+    name: str
+    points: int
+    submitted_date: date
+
+
 @api.post('/scores/add')
-def hello(request, data: ScoreIn):
+def score_add(request, data: ScoreIn):
     if not request.session.get('player_id'):
         print('randomizing new player_id')
         request.session['player_id'] = get_random_id()
@@ -26,8 +35,15 @@ def hello(request, data: ScoreIn):
 
     leaderboard = get_object_or_404(Leaderboard, private_key=data.leaderboard_private_key)
 
-    score = Score.objects.filter(player_id=request.session["player_id"])[0]
+    score = None
+    try:
+        score = Score.objects.get(leaderboard=leaderboard, player_id=request.session["player_id"])
+    except Exception as e:
+        print(e)
+
     if score:
+        score.name = data.player_name
+        score.save()
         if score.points < data.points:
             score.points = data.points
             score.save()
@@ -35,6 +51,10 @@ def hello(request, data: ScoreIn):
         else:
             return f'Previous score was higher.'
     else:
+        max_scores_count = 50
+        if Score.objects.filter(leaderboard=leaderboard).count() >= max_scores_count:
+            Score.objects.filter(leaderboard=leaderboard).order_by('-points').last().delete()
+
         Score.objects.create(
             leaderboard=leaderboard,
             player_id=request.session["player_id"],
@@ -43,3 +63,8 @@ def hello(request, data: ScoreIn):
         )
         return f'Score has been submitted.'
 
+
+@api.get('/scores/{public_key}', response=List[ScoreOut], url_name='scores')
+def scores(request, public_key: str):
+    scores = Score.objects.filter(leaderboard__public_key=public_key)
+    return scores
