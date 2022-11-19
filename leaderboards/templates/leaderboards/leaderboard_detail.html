@@ -4,7 +4,7 @@
 {% block content %}
     <a href="{% url 'leaderboard-list' %}">
         <button type="button"
-                class="btn btn-primary btn-sm mt-3 mx-1">Back
+                class="btn btn-primary btn-sm mx-1">Back
         </button>
     </a>
 
@@ -26,15 +26,6 @@
             <td><b>{{ object.public_key }}</b></td>
             <td>Used to retrieve scores</td>
             <td>
-                {#                <div class="d-flex">#}
-                {#                    <a href="{% url 'score-list' object.public_key %}" class="">#}
-                {#                        <button type="submit" class="btn btn-outline-primary">Html</button>#}
-                {#                    </a>#}
-                {#                    <a href="{% url 'api:scores' object.public_key %}">#}
-                {#                        <button type="submit" class="btn btn-outline-primary">Json</button>#}
-                {#                    </a>#}
-                {#                </div>#}
-
                 <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#retrieveModal">How to retrieve
                 </button>
