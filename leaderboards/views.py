@@ -29,6 +29,11 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
         context = super(LeaderboardDetail, self).get_context_data(**kwargs)
         context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user,
                                                  leaderboard=self.get_object()).order_by('-points')
+        context['submit_url'] = self.request.build_absolute_uri(reverse('api:score_add'))
+        context['retrieve_url'] = self.request.build_absolute_uri(
+            reverse('api:scores', kwargs={'public_key': self.get_object().public_key}))
+        context['retrieve_url_website'] = self.request.build_absolute_uri(
+            reverse('score-list', kwargs={'public_key': self.get_object().public_key}))
         return context
 
 

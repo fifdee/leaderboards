@@ -2,6 +2,7 @@ from datetime import date
 from typing import List
 
 from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
 from ninja import NinjaAPI, Schema
 
 from leaderboards.models import Score, Leaderboard
@@ -14,6 +15,7 @@ class ScoreIn(Schema):
     leaderboard_private_key: str
     player_name: str
     points: int
+    extra: str = ''
 
 
 class ScoreOut(Schema):
@@ -32,6 +34,7 @@ def score_add(request, data: ScoreIn):
     print(f'leaderboard_private_key: {data.leaderboard_private_key}')
     print(f'player_name: {data.player_name}')
     print(f'points: {data.points}')
+    print(f'extra info: {data.extra}')
 
     leaderboard = get_object_or_404(Leaderboard, private_key=data.leaderboard_private_key)
 
@@ -43,9 +46,11 @@ def score_add(request, data: ScoreIn):
 
     if score:
         score.name = data.player_name
+        score.extra = data.extra
         score.save()
         if score.points < data.points:
             score.points = data.points
+            score.submitted_date = now()
             score.save()
             return f'Score has been updated.'
         else:
@@ -59,7 +64,9 @@ def score_add(request, data: ScoreIn):
             leaderboard=leaderboard,
             player_id=request.session["player_id"],
             name=data.player_name,
-            points=data.points
+            points=data.points,
+            submitted_date=now(),
+            extra=data.extra
         )
         return f'Score has been submitted.'
 

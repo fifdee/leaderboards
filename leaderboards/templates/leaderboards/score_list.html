@@ -12,6 +12,7 @@
                 <th scope="col">Nickname</th>
                 <th scope="col">Points</th>
                 <th scope="col">Time</th>
+                <th scope="col">Extra info</th>
             </tr>
             </thead>
             <tbody>
@@ -21,6 +22,7 @@
                     <td>{{ score.name }}</td>
                     <td>{{ score.points }}</td>
                     <td>{{ score.submitted_date|timesince }} ago</td>
+                    <td>{{ score.extra }}</td>
                     <td></td>
                 </tr>
             {% empty %}
