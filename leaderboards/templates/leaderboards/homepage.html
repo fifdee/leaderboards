@@ -1,5 +1,22 @@
 {% extends 'account/base.html' %}
+{% load static %}
 
 {% block content %}
-    Homepage
+    <div class="px-4 py-5 my-5 text-center">
+        <img class="d-block mx-auto mb-4" src="{% static 'icons/highscore.png' %}" alt="" width="72" height="72">
+        <h1 class="display-5 fw-bold">Multi-platform leaderboards</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Quickly create leaderboards for your games. Free to use. Make a GET request to retrieve
+                scores in JSON format or use the provided link to display a page with your leaderboard. Make a POST
+                request to add new score.</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'account_signup' %}">
+                    <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Sign up</button>
+                </a>
+                <a href="{% url 'account_login' %}">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">Sign in</button>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

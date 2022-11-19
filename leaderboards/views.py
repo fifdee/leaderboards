@@ -58,6 +58,9 @@ class LeaderboardUpdate(LoginRequiredMixin, generic.UpdateView):
     def get_queryset(self):
         return Leaderboard.objects.filter(owner=self.request.user)
 
+    def get_success_url(self):
+        return reverse('leaderboard-list')
+
 
 class LeaderboardDelete(LoginRequiredMixin, generic.DeleteView):
     template_name = 'leaderboards/leaderboard_delete.html'

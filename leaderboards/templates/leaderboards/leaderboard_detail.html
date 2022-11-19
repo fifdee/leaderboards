@@ -52,10 +52,10 @@
                             <div class="modal-body">
                                 <p>To retrieve scores you should make a 'GET' request.</p>
                                 <p>For scores in JSON format use this link:</p>
-                                <p><a href="{% url 'api:scores' object.public_key %}"
+                                <p><a class="text-decoration-none" href="{% url 'api:scores' object.public_key %}"
                                       target="_blank">{{ retrieve_url }}</a></p>
                                 <p>For scores appearing as a website use this link:</p>
-                                <p><a href="{% url 'score-list' object.public_key %}"
+                                <p><a class="text-decoration-none" href="{% url 'score-list' object.public_key %}"
                                       target="_blank">{{ retrieve_url_website }}</a></p>
                             </div>
                             <div class="modal-footer">
@@ -109,6 +109,7 @@
                                     }
                                 </code>
                                 <p class="mt-3">Try making a POST request online to see how it works. Go to <a
+                                        class="text-decoration-none"
                                         href="https://reqbin.com/post-online" target="_blank">https://reqbin.com/</a>
                                     and paste the URL
                                     from above in URL field. Click "Content" and paste the request body from above in
@@ -133,7 +134,7 @@
         </tbody>
     </table>
 
-    <h4 class="mt-3">Scores:</h4>
+    <h4 class="mt-3">Scores (best 50):</h4>
 
     <table class="table">
         <thead>
@@ -141,7 +142,7 @@
             <th scope="col">#</th>
             <th scope="col">Nickname</th>
             <th scope="col">Points</th>
-            <th scope="col">Time</th>
+            <th scope="col">Submission time</th>
             <th scope="col">Extra info</th>
             <th scope="col">Player ID</th>
         </tr>

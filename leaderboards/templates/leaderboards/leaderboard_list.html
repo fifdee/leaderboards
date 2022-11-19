@@ -23,7 +23,13 @@
                 <div class="d-flex justify-content-end">
 
                     <div class="">
-                        <small class="mx-3">Modified {{ leaderboard.modified_date|timesince }} ago.</small>
+                        <p class="mx-3">Scores count: {{ leaderboard.score_set.count }}</p>
+                    </div>
+
+                    <div class="mx-2">
+                        <a href="{% url 'leaderboard-update' leaderboard.pk %}">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Rename</button>
+                        </a>
                     </div>
 
                     <div class="">

@@ -19,7 +19,7 @@ from .api import api
 from leaderboards.views import Homepage
 
 urlpatterns = [
-    path('', Homepage.as_view()),
+    path('', Homepage.as_view(), name='homepage'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),

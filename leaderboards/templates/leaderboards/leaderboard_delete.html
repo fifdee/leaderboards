@@ -10,7 +10,7 @@
 
     <form method="post" class="mt-3">
         {% csrf_token %}
-        <p>Are you sure you want to delete "{{ object }}"?</p>
+        <p>Are you really sure you want to delete "{{ object }}" leaderboard? All scores will be lost.</p>
 
         <button type="submit" class="btn btn-outline-primary"
                 onclick="this.disabled=true; this.form.submit();">Confirm
