@@ -77,7 +77,7 @@ class ScoreList(generic.ListView):
     context_object_name = 'scores'
 
     def get_queryset(self):
-        return Score.objects.filter(leaderboard__public_key=self.kwargs['public_key'])
+        return Score.objects.filter(leaderboard__public_key=self.kwargs['public_key']).order_by('-points')
 
     def get_context_data(self, *args, **kwargs):
         public_key = self.kwargs['public_key']
