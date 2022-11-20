@@ -73,5 +73,5 @@ def score_add(request, data: ScoreIn):
 
 @api.get('/scores/{public_key}', response=List[ScoreOut], url_name='scores')
 def scores(request, public_key: str):
-    scores = Score.objects.filter(leaderboard__public_key=public_key)
+    scores = Score.objects.filter(leaderboard__public_key=public_key).order_by('-points')
     return scores

@@ -4,6 +4,10 @@
     {% if leaderboard %}
         <h3 class="mt-3">{{ leaderboard }} </h3>
         <h4 class="mt-3">Scores:</h4>
+        {% if current_user_score %}
+            <h5 class=""><b>{{ current_user_score.name }}</b>, your best score is <b>{{ current_user_score.points }}</b>,
+                and your position is <b>{{ current_user_position }}</b> on this leaderboard.</h5>
+        {% endif %}
 
         <table class="table">
             <thead>

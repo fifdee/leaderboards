@@ -80,10 +80,32 @@ class ScoreList(generic.ListView):
         return Score.objects.filter(leaderboard__public_key=self.kwargs['public_key'])
 
     def get_context_data(self, *args, **kwargs):
+        public_key = self.kwargs['public_key']
         context = super(ScoreList, self).get_context_data(*args, **kwargs)
         context['hide_navbar'] = True
         try:
-            context['leaderboard'] = Leaderboard.objects.get(public_key=self.kwargs['public_key'])
+            context['leaderboard'] = Leaderboard.objects.get(public_key=public_key)
         except Exception as e:
             print(e)
+
+        if not self.request.session.get('player_id'):
+            print('randomizing new player_id')
+            self.request.session['player_id'] = get_random_id()
+
+        try:
+            current_user_score = Score.objects.get(leaderboard__public_key=public_key,
+                                                   player_id=self.request.session.get('player_id'))
+            context['current_user_score'] = current_user_score
+            position = 999
+            count = 1
+            for score in Score.objects.filter(leaderboard__public_key=public_key).order_by('-points'):
+                if score == current_user_score:
+                    position = count
+                    break
+                count += 1
+            context['current_user_position'] = position
+
+        except Exception as e:
+            print(e)
+
         return context
