@@ -45,6 +45,10 @@
                                 <p>For scores in JSON format use this link:</p>
                                 <p><a class="text-decoration-none" href="{% url 'api:scores' object.public_key %}"
                                       target="_blank">{{ retrieve_url }}</a></p>
+                                <p>To get the score in JSON of a specific player, 'John Doe' example:</p>
+                                <p><a class="text-decoration-none"
+                                      href="{% url 'api:user_score' object.public_key 'John Doe' %}"
+                                      target="_blank">{{ retrieve_url_user }}</a></p>
                                 <p>For scores appearing as a website use this link:</p>
                                 <p><a class="text-decoration-none" href="{% url 'score-list' object.public_key %}"
                                       target="_blank">{{ retrieve_url_website }}</a></p>
@@ -79,23 +83,36 @@
                                         aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>To submit a score you should make a 'POST' request.</p>
-                                <p>Required parameters are:</p>
+                                <p>To submit a score you can make either a <b>'GET' or 'POST'</b> request.</p>
+                                <p><b>You should NEVER expose your private key to anyone.</b></p>
+                                <p>'POST' request is safer. In 'GET' request someone may sniff your private key from the
+                                    URL.</p>
+                                <p><b>Required parameters are:</b></p>
                                 <ul>
                                     <li>leaderboard_private_key</li>
-                                    <li>player_name</li>
+                                    <li>name</li>
                                     <li>points</li>
                                 </ul>
                                 <p>Optional parameter is:</p>
                                 <ul>
                                     <li>extra</li>
                                 </ul>
+                                <p><b>You should distinguish your players by their name.</b> If you submit a score with the
+                                    'name' parameter which already exists in the leaderboard, the higher 'points' value
+                                    will be used. </p>
+                                <p>URL for making a GET request to submit a score with player name 'John Doe', 1530
+                                    points and 'Hello there' extra info:</p>
+                                <p><a class="text-decoration-none"
+                                      href="{% url 'score-add' object.private_key %}?name=JJJJohn%20Doe&points=1530&extra=Hello%20there"
+                                      target="_blank">{{ submit_url_get }}?name=John%20Doe&points=1530&extra=Hello%20there</a>
+                                </p>
+
                                 <p>URL for making a POST request is: <code>{{ submit_url }}</code></p>
                                 <p>Example JSON (application/json) POST request body: </p>
                                 <code>
                                     {
                                     "leaderboard_private_key": "{{ object.private_key }}",
-                                    "player_name": "John Doe",
+                                    "name": "John Doe",
                                     "points": 523123
                                     }
                                 </code>
@@ -131,11 +148,10 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Nickname</th>
+            <th scope="col">Name</th>
             <th scope="col">Points</th>
             <th scope="col">Submission time</th>
             <th scope="col">Extra info</th>
-            <th scope="col">Player ID</th>
         </tr>
         </thead>
         <tbody>
@@ -146,7 +162,6 @@
                 <td>{{ score.points }}</td>
                 <td>{{ score.submitted_date|timesince }} ago</td>
                 <td>{{ score.extra }}</td>
-                <td>{{ score.player_id }}</td>
                 <td></td>
             </tr>
         {% empty %}

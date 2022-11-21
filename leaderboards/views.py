@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import generic
 
 from leaderboards.forms import LeaderboardForm
 from leaderboards.models import Leaderboard, Score
-from leaderboards_project.utils import get_random_id
+from leaderboards_project.utils import get_random_id, add_or_update_score
 
 
 class Homepage(generic.TemplateView):
@@ -30,8 +31,12 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
         context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user,
                                                  leaderboard=self.get_object()).order_by('-points')
         context['submit_url'] = self.request.build_absolute_uri(reverse('api:score_add'))
+        context['submit_url_get'] = self.request.build_absolute_uri(
+            reverse('score-add', kwargs={'private_key': self.get_object().private_key}))
         context['retrieve_url'] = self.request.build_absolute_uri(
             reverse('api:scores', kwargs={'public_key': self.get_object().public_key}))
+        context['retrieve_url_user'] = self.request.build_absolute_uri(
+            reverse('api:user_score', kwargs={'public_key': self.get_object().public_key, 'name': 'John Doe'}))
         context['retrieve_url_website'] = self.request.build_absolute_uri(
             reverse('score-list', kwargs={'public_key': self.get_object().public_key}))
         return context
@@ -88,24 +93,33 @@ class ScoreList(generic.ListView):
         except Exception as e:
             print(e)
 
-        if not self.request.session.get('player_id'):
-            print('randomizing new player_id')
-            self.request.session['player_id'] = get_random_id()
-
-        try:
-            current_user_score = Score.objects.get(leaderboard__public_key=public_key,
-                                                   player_id=self.request.session.get('player_id'))
-            context['current_user_score'] = current_user_score
-            position = 999
-            count = 1
-            for score in Score.objects.filter(leaderboard__public_key=public_key).order_by('-points'):
-                if score == current_user_score:
-                    position = count
-                    break
-                count += 1
-            context['current_user_position'] = position
-
-        except Exception as e:
-            print(e)
-
         return context
+
+
+class ScoreData:
+    def __init__(self, leaderboard_private_key, name, points, extra):
+        self.leaderboard_private_key = leaderboard_private_key
+        self.name = name
+        self.points = points
+        self.extra = extra
+
+
+class ScoreAdd(generic.View):
+    def get(self, request, private_key):
+        name = request.GET.get("name", None)
+        points = request.GET.get("points", None)
+        extra = request.GET.get("extra", '')
+
+        print(f'leaderboard_private_key: {private_key}')
+        print(f'name: {name}')
+        print(f'points: {points}')
+        print(f'extra: {extra}')
+
+        if not name:
+            return HttpResponse('Name was not provided.')
+        if not points:
+            return HttpResponse('Points were not provided.')
+
+        data = ScoreData(private_key, name, int(points), extra)
+
+        return add_or_update_score(data, is_get_request=True)
