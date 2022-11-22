@@ -22,48 +22,6 @@
         <tbody>
         <tr>
             <th scope="row">1</th>
-            <td>Public key</td>
-            <td><b>{{ object.public_key }}</b></td>
-            <td>Used to retrieve scores</td>
-            <td>
-                <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
-                        data-bs-target="#retrieveModal">How to retrieve
-                </button>
-
-                <!-- Modal -->
-                <div class="modal  modal-lg fade" id="retrieveModal" tabindex="-1" aria-labelledby="retrieveModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="retrieveModalLabel">How to retrieve scores</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>To retrieve scores you should make a 'GET' request.</p>
-                                <p>For scores in JSON format use this link:</p>
-                                <p><a class="text-decoration-none" href="{% url 'api:scores' object.public_key %}"
-                                      target="_blank">{{ retrieve_url }}</a></p>
-                                <p>To get the score in JSON of a specific player, 'John Doe' example:</p>
-                                <p><a class="text-decoration-none"
-                                      href="{% url 'api:user_score' object.public_key 'John Doe' %}"
-                                      target="_blank">{{ retrieve_url_user }}</a></p>
-                                <p>For scores appearing as a website use this link:</p>
-                                <p><a class="text-decoration-none" href="{% url 'score-list' object.public_key %}"
-                                      target="_blank">{{ retrieve_url_website }}</a></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
             <td>Private key</td>
             <td><b>{{ object.private_key }}</b></td>
             <td>Used to submit scores</td>
@@ -89,44 +47,114 @@
                                     URL.</p>
                                 <p><b>Required parameters are:</b></p>
                                 <ul>
-                                    <li>leaderboard_private_key</li>
-                                    <li>name</li>
-                                    <li>points</li>
+                                    <li><b>leaderboard_private_key</b></li>
+                                    <li><b>name</b></li>
+                                    <li><b>points</b></li>
                                 </ul>
                                 <p>Optional parameter is:</p>
                                 <ul>
                                     <li>extra</li>
                                 </ul>
-                                <p><b>You should distinguish your players by their name.</b> If you submit a score with the
+                                <p><b>You should distinguish your players by their name.</b> If you submit a score with
+                                    the
                                     'name' parameter which already exists in the leaderboard, the higher 'points' value
                                     will be used. </p>
-                                <p>URL for making a GET request to submit a score with player name 'John Doe', 1530
-                                    points and 'Hello there' extra info:</p>
+                                <hr>
+
+                                <p>Submitting score with <b>GET request</b> scheme:</p>
+                                <p><code>{{ submit_url_get_scheme }}?name=(name)&points=(points)&extra=(extra)</code>
+                                </p>
+
+                                <p>Example URL for making a GET request to submit a score with player name 'John Doe',
+                                    1530 points and 'Hello there' extra info:</p>
                                 <p><a class="text-decoration-none"
-                                      href="{% url 'score-add' object.private_key %}?name=JJJJohn%20Doe&points=1530&extra=Hello%20there"
+                                      href="{% url 'score-add' object.private_key %}?name=John%20Doe&points=1530&extra=Hello%20there"
                                       target="_blank">{{ submit_url_get }}?name=John%20Doe&points=1530&extra=Hello%20there</a>
                                 </p>
 
-                                <p>URL for making a POST request is: <code>{{ submit_url }}</code></p>
+                                <p>Example URL for making a GET request to submit a score with player name 'Bob Second',
+                                    2140 points and no extra info:</p>
+                                <p><a class="text-decoration-none"
+                                      href="{% url 'score-add' object.private_key %}?name=Bob%20Second&points=2140"
+                                      target="_blank">{{ submit_url_get }}?name=Bob%20Second&points=2140</a>
+                                </p>
+
+                                <hr>
+                                <p>URL for making a <b>POST request</b> is: <code>{{ submit_url }}</code></p>
+
+                                <p>JSON (application/json) POST request body scheme: </p>
+                                <code>
+                                    {
+                                        "leaderboard_private_key": "(private_key)",
+                                        "name": "(name)",
+                                        "points": "(points)",
+                                        "extra": "(extra)"
+                                    }
+                                </code>
+
                                 <p>Example JSON (application/json) POST request body: </p>
                                 <code>
                                     {
-                                    "leaderboard_private_key": "{{ object.private_key }}",
-                                    "name": "John Doe",
-                                    "points": 523123
+                                        "leaderboard_private_key": "{{ object.private_key }}",
+                                        "name": "John Doe",
+                                        "points": 2345,
+                                        "extra": "This is optional."
                                     }
                                 </code>
                                 <p class="mt-3">Try making a POST request online to see how it works. Go to <a
                                         class="text-decoration-none"
                                         href="https://reqbin.com/post-online" target="_blank">https://reqbin.com/</a>
-                                    and paste the URL
-                                    from above in URL field. Click "Content" and paste the request body from above in
-                                    JSON (application/json) field. Don't forget the curly brackets { }. The last step is
-                                    to click "Send". If everything is OK you should see the response saying:
-                                    "Score has been submitted.". The leaderboard remembers the user, so if you submit
-                                    your score again, your score will be updated if the new one is higher than the
-                                    previous one or if you change the nickname or extra info.
+                                    and paste the URL from above in URL field. Click "Content" and paste the request
+                                    body from above in JSON (application/json) field. Don't forget the curly brackets {
+                                    }. The last step is to click "Send". If everything is OK you should see the response
+                                    saying: "Score has been submitted.".
                                 </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">2</th>
+            <td>Public key</td>
+            <td><b>{{ object.public_key }}</b></td>
+            <td>Used to retrieve scores</td>
+            <td>
+                <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#retrieveModal">How to retrieve
+                </button>
+
+                <!-- Modal -->
+                <div class="modal  modal-lg fade" id="retrieveModal" tabindex="-1" aria-labelledby="retrieveModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="retrieveModalLabel">How to retrieve scores</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>To retrieve scores you should make a 'GET' request.</p>
+                                <p>For scores in JSON format:</p>
+                                <p><code>{{ retrieve_url_scheme }}</code></p>
+                                <p>To get scores of this leaderboard:</p>
+                                <p><a class="text-decoration-none" href="{% url 'api:scores' object.public_key %}"
+                                      target="_blank">{{ retrieve_url }}</a></p>
+                                <p>To get the score of a specific player::</p>
+                                <p><code>{{ retrieve_url_user_scheme }}</code></p>
+                                <p>To get the score in JSON of a player 'John Doe':</p>
+                                <p><a class="text-decoration-none"
+                                      href="{% url 'api:user_score' object.public_key 'John Doe' %}"
+                                      target="_blank">{{ retrieve_url_user }}</a></p>
+                                <p>For scores appearing as a website use this link:</p>
+                                <p><a class="text-decoration-none" href="{% url 'score-list' object.public_key %}"
+                                      target="_blank">{{ retrieve_url_website }}</a></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close

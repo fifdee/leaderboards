@@ -6,26 +6,16 @@
         <img class="d-block mx-auto mb-4" src="{% static 'icons/highscore.png' %}" alt="" width="72" height="72">
         <h1 class="display-5 fw-bold">Multi-platform leaderboards</h1>
         <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">Quickly create leaderboards for your games. Free to use. Make a GET request to retrieve
-                scores in JSON format or use the provided link to display a page with your leaderboard. Make a POST
-                request to add new score.</p>
+            <p class="lead mb-4">Quickly create leaderboards for your games. Free to use. Make a GET request with provided public_key to retrieve
+                scores in JSON format. Make a GET or POST
+                request with provided private_key to submit scores.</p>
 
-            {% if not request.user.is_authenticated %}
-                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <a href="{% url 'account_signup' %}">
-                        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Sign up</button>
-                    </a>
-                    <a href="{% url 'account_login' %}">
-                        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Sign in</button>
-                    </a>
-                </div>
-            {% else %}
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                     <a href="{% url 'leaderboard-list' %}">
                         <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Your leaderboards</button>
                     </a>
                 </div>
-            {% endif %}
+
         </div>
     </div>
 {% endblock %}

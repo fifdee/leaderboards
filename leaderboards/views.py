@@ -31,14 +31,28 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
         context['scores'] = Score.objects.filter(leaderboard__owner=self.request.user,
                                                  leaderboard=self.get_object()).order_by('-points')
         context['submit_url'] = self.request.build_absolute_uri(reverse('api:score_add'))
+
         context['submit_url_get'] = self.request.build_absolute_uri(
             reverse('score-add', kwargs={'private_key': self.get_object().private_key}))
+
+        context['submit_url_get_scheme'] = self.request.build_absolute_uri(
+            reverse('score-add', kwargs={'private_key': '(private_key)'}))
+
         context['retrieve_url'] = self.request.build_absolute_uri(
             reverse('api:scores', kwargs={'public_key': self.get_object().public_key}))
+
+        context['retrieve_url_scheme'] = self.request.build_absolute_uri(
+            reverse('api:scores', kwargs={'public_key': '(public_key)'}))
+
         context['retrieve_url_user'] = self.request.build_absolute_uri(
             reverse('api:user_score', kwargs={'public_key': self.get_object().public_key, 'name': 'John Doe'}))
+
+        context['retrieve_url_user_scheme'] = self.request.build_absolute_uri(
+            reverse('api:user_score', kwargs={'public_key': '(public_key)', 'name': '(name)'}))
+
         context['retrieve_url_website'] = self.request.build_absolute_uri(
             reverse('score-list', kwargs={'public_key': self.get_object().public_key}))
+
         return context
 
 
