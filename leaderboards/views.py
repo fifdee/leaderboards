@@ -50,6 +50,12 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
         context['retrieve_url_user_scheme'] = self.request.build_absolute_uri(
             reverse('api:user_score', kwargs={'public_key': '(public_key)', 'name': '(name)'}))
 
+        context['retrieve_url_user_uuid'] = self.request.build_absolute_uri(
+            reverse('api:user_score_uuid', kwargs={'public_key': self.get_object().public_key, 'uuid': 'zxcasdqwe567234'}))
+
+        context['retrieve_url_user_uuid_scheme'] = self.request.build_absolute_uri(
+            reverse('api:user_score_uuid', kwargs={'public_key': '(public_key)', 'uuid': '(uuid)'}))
+
         context['retrieve_url_website'] = self.request.build_absolute_uri(
             reverse('score-list', kwargs={'public_key': self.get_object().public_key}))
 
@@ -111,29 +117,35 @@ class ScoreList(generic.ListView):
 
 
 class ScoreData:
-    def __init__(self, leaderboard_private_key, name, points, extra):
+    def __init__(self, leaderboard_private_key, name, points, time, extra, uuid):
         self.leaderboard_private_key = leaderboard_private_key
         self.name = name
         self.points = points
+        self.time = time
         self.extra = extra
+        self.uuid = uuid
 
 
 class ScoreAdd(generic.View):
     def get(self, request, private_key):
         name = request.GET.get("name", None)
         points = request.GET.get("points", None)
+        time = request.GET.get("time", '')
         extra = request.GET.get("extra", '')
+        uuid = request.GET.get("uuid", '')
 
         print(f'leaderboard_private_key: {private_key}')
         print(f'name: {name}')
         print(f'points: {points}')
+        print(f'time: {time}')
         print(f'extra: {extra}')
+        print(f'uuid: {uuid}')
 
         if not name:
             return HttpResponse('Name was not provided.')
         if not points:
             return HttpResponse('Points were not provided.')
 
-        data = ScoreData(private_key, name, int(points), extra)
+        data = ScoreData(private_key, name, int(points), time, extra, uuid)
 
         return add_or_update_score(data, is_get_request=True)

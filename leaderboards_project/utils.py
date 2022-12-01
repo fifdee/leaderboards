@@ -15,7 +15,14 @@ def add_or_update_score(data, is_get_request=False):
 
     score = None
     try:
-        score = Score.objects.get(leaderboard=leaderboard, name=data.name)
+        if data.uuid != '':
+            score = Score.objects.get(leaderboard=leaderboard, uuid=data.uuid)
+        else:
+            score = Score.objects.filter(leaderboard=leaderboard, name=data.name)[0]
+    except Score.DoesNotExist:
+        print('Score with provided uuid was not found.')
+    except IndexError:
+        print('Score with provided name was not found.')
     except Exception as e:
         print(e)
     finally:
@@ -24,6 +31,7 @@ def add_or_update_score(data, is_get_request=False):
             score.save()
             if score.points < data.points:
                 score.points = data.points
+                score.time = data.time
                 score.submitted_date = now()
                 score.save()
                 if is_get_request:
@@ -42,8 +50,10 @@ def add_or_update_score(data, is_get_request=False):
                 leaderboard=leaderboard,
                 name=data.name,
                 points=data.points,
+                time=data.time,
                 submitted_date=now(),
-                extra=data.extra
+                extra=data.extra,
+                uuid=data.uuid
             )
             if is_get_request:
                 return HttpResponse('Score has been submitted.')

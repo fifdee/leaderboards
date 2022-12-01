@@ -51,14 +51,20 @@
                                     <li><b>name</b></li>
                                     <li><b>points</b></li>
                                 </ul>
-                                <p>Optional parameter is:</p>
+                                <p>Optional parameters are:</p>
                                 <ul>
+                                    <li>uuid</li>
+                                    <li>time</li>
                                     <li>extra</li>
                                 </ul>
-                                <p><b>You should distinguish your players by their name.</b> If you submit a score with
-                                    the
-                                    'name' parameter which already exists in the leaderboard, the higher 'points' value
-                                    will be used. </p>
+                                <p><b>Ideally you should distinguish your players by providing uuid (unique user
+                                    identifier) - platform you are developing your game with, probably gives such
+                                    function. If 'uuid' is not provided when submitting a score - then 'name' will be
+                                    used to search if such score exists in the leaderboard instead of the 'uuid'. If the
+                                    score is found, it'll compare the 'points' value and use the one which is higher. If
+                                    not - new score will be created for this leaderboard.
+                                </b>
+                                </p>
                                 <hr>
 
                                 <p><b>OPTION #1</b></p>
@@ -67,14 +73,14 @@
                                 </p>
 
                                 <p>Example URL for making a GET request to submit a score with player name 'John Doe',
-                                    1530 points and 'Hello there' extra info:</p>
+                                    1530 points, 'Hello there' extra info and 'zxcasdqwe567234' uuid:</p>
                                 <p><a class="text-decoration-none"
-                                      href="{% url 'score-add' object.private_key %}?name=John%20Doe&points=1530&extra=Hello%20there"
-                                      target="_blank">{{ submit_url_get }}?name=John%20Doe&points=1530&extra=Hello%20there</a>
+                                      href="{% url 'score-add' object.private_key %}?name=John%20Doe&points=1530&extra=Hello%20there&uuid=zxcasdqwe567234"
+                                      target="_blank">{{ submit_url_get }}?name=John%20Doe&points=1530&extra=Hello%20there&uuid=zxcasdqwe567234</a>
                                 </p>
 
                                 <p>Example URL for making a GET request to submit a score with player name 'Bob Second',
-                                    2140 points and no extra info:</p>
+                                    2140 points, no extra info, no uuid:</p>
                                 <p><a class="text-decoration-none"
                                       href="{% url 'score-add' object.private_key %}?name=Bob%20Second&points=2140"
                                       target="_blank">{{ submit_url_get }}?name=Bob%20Second&points=2140</a>
@@ -87,20 +93,24 @@
                                 <p>JSON (application/json) POST request body scheme: </p>
                                 <code>
                                     {
-                                        "leaderboard_private_key": "(private_key)",
-                                        "name": "(name)",
-                                        "points": "(points)",
-                                        "extra": "(extra)"
+                                    "leaderboard_private_key": "(private_key)",
+                                    "name": "(name)",
+                                    "points": "(points)",
+                                    "time": "(time)",
+                                    "extra": "(extra)",
+                                    "uuid": "(uuid)"
                                     }
                                 </code>
 
                                 <p>Example JSON (application/json) POST request body: </p>
                                 <code>
                                     {
-                                        "leaderboard_private_key": "{{ object.private_key }}",
-                                        "name": "John Doe",
-                                        "points": 2345,
-                                        "extra": "This is optional."
+                                    "leaderboard_private_key": "{{ object.private_key }}",
+                                    "name": "John Doe",
+                                    "points": 2345,
+                                    "time": "37 seconds",
+                                    "extra": "Big guy",
+                                    "uuid": "333rtyuio777"
                                     }
                                 </code>
                                 <p class="mt-3">Try making a POST request online to see how it works. Go to <a
@@ -148,12 +158,20 @@
                                 <p>To get scores of this leaderboard:</p>
                                 <p><a class="text-decoration-none" href="{% url 'api:scores' object.public_key %}"
                                       target="_blank">{{ retrieve_url }}</a></p>
-                                <p>To get the score of a specific player::</p>
+                                <p>To get the score(s) of a specific nickname:</p>
                                 <p><code>{{ retrieve_url_user_scheme }}</code></p>
-                                <p>To get the score in JSON of a player 'John Doe':</p>
+                                <p>To get the score in JSON of a player(s) called 'John Doe':</p>
                                 <p><a class="text-decoration-none"
                                       href="{% url 'api:user_score' object.public_key 'John Doe' %}"
                                       target="_blank">{{ retrieve_url_user }}</a></p>
+
+                                <p>To get the score of a specific uuid:</p>
+                                <p><code>{{ retrieve_url_user_uuid_scheme }}</code></p>
+                                <p>To get the score in JSON of a player(s) uuid 'zxcasdqwe567234':</p>
+                                <p><a class="text-decoration-none"
+                                      href="{% url 'api:user_score_uuid' object.public_key 'zxcasdqwe567234' %}"
+                                      target="_blank">{{ retrieve_url_user_uuid }}</a></p>
+
                                 <p>For scores appearing as a website use this link:</p>
                                 <p><a class="text-decoration-none" href="{% url 'score-list' object.public_key %}"
                                       target="_blank">{{ retrieve_url_website }}</a></p>
@@ -180,8 +198,10 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Points</th>
+            <th scope="col">Time</th>
             <th scope="col">Submission time</th>
             <th scope="col">Extra info</th>
+            <th scope="col">UUID</th>
         </tr>
         </thead>
         <tbody>
@@ -190,13 +210,15 @@
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>{{ score.name }}</td>
                 <td>{{ score.points }}</td>
+                <td>{{ score.time }}</td>
                 <td>{{ score.submitted_date|timesince }} ago</td>
                 <td>{{ score.extra }}</td>
+                <td>{{ score.uuid }}</td>
                 <td></td>
             </tr>
         {% empty %}
             <tr>
-                <td colspan="5">No scores for this leaderboard yet!</td>
+                <td colspan="7">No scores for this leaderboard yet!</td>
             </tr>
         {% endfor %}
         <tr>

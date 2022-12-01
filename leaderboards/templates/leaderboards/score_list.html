@@ -10,6 +10,7 @@
                 <th scope="col">#</th>
                 <th scope="col">Nickname</th>
                 <th scope="col">Points</th>
+                <th scope="col">Time</th>
                 <th scope="col">Submission time</th>
                 <th scope="col">Extra info</th>
             </tr>
@@ -20,6 +21,7 @@
                     <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ score.name }}</td>
                     <td>{{ score.points }}</td>
+                    <td>{{ score.time }}</td>
                     <td>{{ score.submitted_date|timesince }} ago</td>
                     <td>{{ score.extra }}</td>
                     <td></td>
