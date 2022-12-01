@@ -28,6 +28,7 @@ def add_or_update_score(data, is_get_request=False):
     finally:
         if score:
             score.extra = data.extra
+            score.name = data.name
             score.save()
             if score.points < data.points:
                 score.points = data.points

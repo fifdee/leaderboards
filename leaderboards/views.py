@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 
@@ -51,7 +51,8 @@ class LeaderboardDetail(LoginRequiredMixin, generic.DetailView):
             reverse('api:user_score', kwargs={'public_key': '(public_key)', 'name': '(name)'}))
 
         context['retrieve_url_user_uuid'] = self.request.build_absolute_uri(
-            reverse('api:user_score_uuid', kwargs={'public_key': self.get_object().public_key, 'uuid': 'zxcasdqwe567234'}))
+            reverse('api:user_score_uuid',
+                    kwargs={'public_key': self.get_object().public_key, 'uuid': 'zxcasdqwe567234'}))
 
         context['retrieve_url_user_uuid_scheme'] = self.request.build_absolute_uri(
             reverse('api:user_score_uuid', kwargs={'public_key': '(public_key)', 'uuid': '(uuid)'}))
@@ -149,3 +150,11 @@ class ScoreAdd(generic.View):
         data = ScoreData(private_key, name, int(points), time, extra, uuid)
 
         return add_or_update_score(data, is_get_request=True)
+
+
+class ScoreDelete(LoginRequiredMixin, generic.View):
+    def get(self, request, pk):
+        score = get_object_or_404(Score, pk=pk)
+        leaderboard_pk = score.leaderboard.pk
+        score.delete()
+        return redirect('leaderboard-detail', pk=leaderboard_pk)

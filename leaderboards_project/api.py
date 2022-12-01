@@ -27,6 +27,12 @@ class ScoreOut(Schema):
     submitted_date: datetime
 
 
+class ScoreDelete(Schema):
+    leaderboard_private_key: str
+    uuid: str = ''
+    name: str = ''
+
+
 @api.post('/scores/add')
 def score_add(request, data: ScoreIn):
     print(f'leaderboard_private_key: {data.leaderboard_private_key}')
@@ -37,6 +43,34 @@ def score_add(request, data: ScoreIn):
     print(f'uuid: {data.uuid}')
 
     return add_or_update_score(data)
+
+
+@api.post('/scores/delete')
+def score_delete(request, data: ScoreDelete, url_name='score_delete'):
+    print('Deleting score')
+    print(f'leaderboard_private_key: {data.leaderboard_private_key}')
+    print(f'name: {data.name}')
+    print(f'uuid: {data.uuid}')
+
+    score = None
+    try:
+        if data.uuid != '':
+            score = Score.objects.get(leaderboard__private_key=data.leaderboard_private_key, uuid=data.uuid)
+        else:
+            score = Score.objects.get(leaderboard__private_key=data.leaderboard_private_key, name=data.name)
+    except Score.MultipleObjectsReturned:
+        if data.uuid != '':
+            score = Score.objects.filter(leaderboard__private_key=data.leaderboard_private_key, uuid=data.uuid)
+        else:
+            score = Score.objects.filter(leaderboard__private_key=data.leaderboard_private_key, name=data.name)
+    except Score.DoesNotExist:
+        return 'Score with provided information does not exist.'
+    except Exception as e:
+        print(e)
+    finally:
+        if score:
+            score.delete()
+            return 'Score has been deleted.'
 
 
 @api.get('/scores/{public_key}', response=List[ScoreOut], url_name='scores')
