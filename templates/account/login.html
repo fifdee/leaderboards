@@ -14,15 +14,12 @@
         {% get_providers as socialaccount_providers %}
 
         {% if socialaccount_providers %}
-            <p class="small">{% blocktrans with site.name as site_name %}Please sign in with one
-                of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-                for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+            <p class="small">Please sign in with Facebook or previously
+                created account. Need an account? <a href="{{ signup_url }}">Sign up here.</a></p>
 
             <div class="socialaccount_ballot">
 
-                <ul class="socialaccount_providers">
-                    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-                </ul>
+                <a href="{% provider_login_url "facebook" method="oauth2" %}">Facebook OAuth2</a>
 
                 <div class="login-or">{% trans 'or' %}</div>
 

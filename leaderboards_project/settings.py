@@ -67,7 +67,6 @@ INSTALLED_APPS = [
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
-        'METHOD': 'js_sdk',
         'SCOPE': ['email'],
         'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
         'INIT_PARAMS': {'cookie': True},

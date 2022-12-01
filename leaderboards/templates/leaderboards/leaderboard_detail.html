@@ -24,7 +24,7 @@
             <th scope="row">1</th>
             <td>Private key</td>
             <td><b>{{ object.private_key }}</b></td>
-            <td>Used to submit scores</td>
+            <td>Use to submit scores</td>
             <td>
                 <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#submitModal">How to submit
@@ -61,6 +61,7 @@
                                     will be used. </p>
                                 <hr>
 
+                                <p><b>OPTION #1</b></p>
                                 <p>Submitting score with <b>GET request</b> scheme:</p>
                                 <p><code>{{ submit_url_get_scheme }}?name=(name)&points=(points)&extra=(extra)</code>
                                 </p>
@@ -80,6 +81,7 @@
                                 </p>
 
                                 <hr>
+                                <p><b>OPTION #2</b></p>
                                 <p>URL for making a <b>POST request</b> is: <code>{{ submit_url }}</code></p>
 
                                 <p>JSON (application/json) POST request body scheme: </p>
@@ -123,7 +125,7 @@
             <th scope="row">2</th>
             <td>Public key</td>
             <td><b>{{ object.public_key }}</b></td>
-            <td>Used to retrieve scores</td>
+            <td>Use to retrieve scores</td>
             <td>
                 <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#retrieveModal">How to retrieve
