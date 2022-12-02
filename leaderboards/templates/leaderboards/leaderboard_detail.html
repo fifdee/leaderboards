@@ -24,11 +24,57 @@
             <th scope="row">1</th>
             <td>Private key</td>
             <td><b>{{ object.private_key }}</b></td>
-            <td>Use to submit scores</td>
+            <td>Use to submit or delete scores</td>
             <td>
                 <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#submitModal">How to submit
                 </button>
+
+                <button type="submit" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">How to delete
+                </button>
+
+                <div class="modal modal-lg fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="deleteModalLabel">How to delete scores</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>To delete a score you can use a 'Delete' button in your leaderboard dashboard or make
+                                    a 'POST' request.</p>
+                                <p>URL for making a <b>POST request</b> is: <code>{{ delete_url }}</code></p>
+
+                                <p>JSON (application/json) POST request body scheme: </p>
+                                <code>
+                                    {
+                                    "leaderboard_private_key": "(private_key)",
+                                    "uuid": "(uuid)"
+                                    }
+                                </code>
+
+                                <p class="mt-3">or:</p>
+                                <code>
+                                    {
+                                    "leaderboard_private_key": "(private_key)",
+                                    "name": "(name)"
+                                    }
+                                </code>
+
+                                <p class="mt-3">For example: </p>
+                                <code>
+                                    {
+                                    "leaderboard_private_key": "{{ object.private_key }}",
+                                    "name": "John Doe"
+                                    }
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Modal -->
                 <div class="modal modal-lg fade" id="submitModal" tabindex="-1" aria-labelledby="submitModalLabel"
@@ -190,7 +236,8 @@
         </tbody>
     </table>
 
-    <h4 class="mt-3">Scores (best 50):</h4>
+    <h4 class="mt-3">Scores (best 50). <a class="text-decoration-none" href="{% url 'leaderboard-detail' object.pk %}">Refresh
+        to see changes.</a></h4>
 
     <table class="table">
         <thead>
