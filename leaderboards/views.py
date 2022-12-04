@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 
-from leaderboards.forms import LeaderboardForm
+from leaderboards.forms import LeaderboardForm, FeedbackForm
 from leaderboards.models import Leaderboard, Score
 from leaderboards_project.utils import get_random_id, add_or_update_score
 
@@ -159,3 +159,23 @@ class ScoreDelete(LoginRequiredMixin, generic.View):
         leaderboard_pk = score.leaderboard.pk
         score.delete()
         return redirect('leaderboard-detail', pk=leaderboard_pk)
+
+
+class FeedbackSend(generic.CreateView):
+    template_name = 'leaderboards/contact.html'
+
+    def get_form(self, form_class=None):
+        form = super(FeedbackSend, self).get_form(form_class=FeedbackForm)
+        if self.request.user.is_authenticated:
+            email = self.request.user.email
+            form.fields['email'].initial = email
+
+        return form
+
+    def form_valid(self, form):
+        form.save()
+        return redirect('contact-success')
+
+
+class FeedbackSendSuccess(generic.TemplateView):
+    template_name = 'leaderboards/contact_success.html'

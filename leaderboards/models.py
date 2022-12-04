@@ -33,6 +33,14 @@ class Score(models.Model):
         return f'{self.name}: {self.points}'
 
 
+class Feedback(models.Model):
+    email = models.EmailField(max_length=100)
+    message = models.TextField()
+
+    def __str__(self):
+        return f'{self.email}: {self.message}'
+
+
 def set_username(sender, instance, **kwargs):
     email = instance.email
     username = email[:30]
