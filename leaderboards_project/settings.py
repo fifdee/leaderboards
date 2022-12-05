@@ -218,11 +218,11 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'no-reply-delivery@outlook.com'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD_OUTLOOK')
+EMAIL_HOST_USER = env('EMAIL_USER_SES')
+DEFAULT_FROM_EMAIL = 'leaderboards@v45.org'
+EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD_SES')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
