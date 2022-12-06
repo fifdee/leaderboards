@@ -14,4 +14,5 @@ urlpatterns = [
     path('scores/delete/<int:pk>/', ScoreDelete.as_view(), name='score-delete'),
     path('contact/', FeedbackSend.as_view(), name='contact'),
     path('contact-success/', FeedbackSendSuccess.as_view(), name='contact-success'),
+
 ]

@@ -1,7 +1,7 @@
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -41,6 +41,12 @@ class Feedback(models.Model):
         return f'{self.email}: {self.message}'
 
 
+def update_modified(sender, instance, **kwargs):
+    leaderboard = Leaderboard.objects.get(pk=instance.leaderboard.pk)
+    leaderboard.modified_date = now()
+    leaderboard.save()
+
+
 def set_username(sender, instance, **kwargs):
     email = instance.email
     username = email[:30]
@@ -51,4 +57,5 @@ def set_username(sender, instance, **kwargs):
     instance.username = username
 
 
+post_save.connect(update_modified, sender=Score)
 pre_save.connect(set_username, sender=User)

@@ -21,6 +21,9 @@
                 </div>
 
                 <div class="d-flex justify-content-end">
+                    <div class="">
+                        <p class="mx-3">Modified {{ leaderboard.modified_date|timesince }} ago</p>
+                    </div>
 
                     <div class="">
                         <p class="mx-3">Scores count: {{ leaderboard.score_set.count }}</p>
