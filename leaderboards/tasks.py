@@ -1,15 +1,15 @@
 import datetime
-from time import sleep
-from django.core.mail import send_mail
-from celery import shared_task
+
 from django.utils.timezone import now
+from huey import crontab
+from huey.contrib.djhuey import db_periodic_task, db_task
 
 from leaderboards.models import Leaderboard
 
 
-@shared_task(name='leaderboard_expired')
+@db_periodic_task(crontab(minute='*/5'))
 def leaderboard_expired():
     leaderboards = Leaderboard.objects.all()
     for leaderboard in leaderboards:
-        if now() - leaderboard.modified_date > datetime.timedelta(minutes=5):
+        if now() - leaderboard.modified_date > datetime.timedelta(minutes=15):
             leaderboard.delete()

@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'crispy_forms',
     'crispy_bootstrap5',
+    'huey.contrib.djhuey',
 
     'leaderboards.apps.LeaderboardsConfig',
 ]
@@ -233,5 +234,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 SESSION_COOKIE_SECURE = not DEBUG
 
-CELERY_BROKER_URL = env('REDIS_CELERY')
-CELERY_RESULT_BACKEND = env('REDIS_CELERY')
+HUEY = {
+    'name': 'leaderboards',
+    'url': env('REDIS_CELERY')
+}
