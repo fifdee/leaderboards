@@ -43,10 +43,6 @@ def add_or_update_score(data, is_get_request=False):
                     return HttpResponse('Previous score was higher.')
                 return f'Previous score was higher.'
         else:
-            max_scores_count = 50
-            if Score.objects.filter(leaderboard=leaderboard).count() >= max_scores_count:
-                Score.objects.filter(leaderboard=leaderboard).order_by('-points').last().delete()
-
             Score.objects.create(
                 leaderboard=leaderboard,
                 name=data.name,
@@ -56,6 +52,11 @@ def add_or_update_score(data, is_get_request=False):
                 extra=data.extra,
                 uuid=data.uuid
             )
+
+            max_scores_count = 50
+            if Score.objects.filter(leaderboard=leaderboard).count() > max_scores_count:
+                Score.objects.filter(leaderboard=leaderboard).order_by('-points').last().delete()
+
             if is_get_request:
                 return HttpResponse('Score has been submitted.')
             return f'Score has been submitted.'
