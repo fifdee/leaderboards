@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
@@ -157,7 +157,10 @@ class ScoreDelete(LoginRequiredMixin, generic.View):
     def get(self, request, pk):
         score = get_object_or_404(Score, pk=pk)
         leaderboard_pk = score.leaderboard.pk
-        score.delete()
+        if score.leaderboard.owner == request.user:
+            score.delete()
+        else:
+            raise Http404()
         return redirect('leaderboard-detail', pk=leaderboard_pk)
 
 

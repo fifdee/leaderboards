@@ -2,7 +2,7 @@ import datetime
 
 from django.utils.timezone import now
 from huey import crontab
-from huey.contrib.djhuey import db_periodic_task, db_task
+from huey.contrib.djhuey import db_periodic_task
 
 from leaderboards.models import Leaderboard
 
