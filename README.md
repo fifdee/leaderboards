@@ -1,0 +1,51 @@
+# Leaderboards - Django app with RESTful functionality to add and retrieve scores.
+## Sample use case: mobile games which need to store players highscores online.
+### Live: https://leaderboards.v45.org/
+##### Requirements:
+```
+amqp==5.1.1
+asgiref==3.5.2
+async-timeout==4.0.2
+billiard==3.6.4.0
+certifi==2022.9.24
+cffi==1.15.1
+charset-normalizer==2.1.1
+click==8.1.3
+click-didyoumean==0.3.0
+click-plugins==1.1.1
+click-repl==0.2.0
+colorama==0.4.6
+crispy-bootstrap5==0.7
+cryptography==38.0.3
+defusedxml==0.7.1
+Django==4.1.3
+django-allauth==0.51.0
+django-browser-reload==1.6.0
+django-crispy-forms==1.14.0
+django-environ==0.9.0
+django-ninja==0.19.1
+gunicorn==20.1.0
+idna==3.4
+kombu==5.2.4
+oauthlib==3.2.2
+prompt-toolkit==3.0.33
+psycopg2==2.9.5
+pycparser==2.21
+pydantic==1.10.2
+PyJWT==2.6.0
+python3-openid==3.2.0
+pytz==2022.6
+redis==4.4.0
+requests==2.28.1
+requests-oauthlib==1.3.1
+sentry-sdk==1.11.1
+six==1.16.0
+sqlparse==0.4.3
+typing_extensions==4.4.0
+tzdata==2022.6
+urllib3==1.26.12
+vine==5.0.0
+wcwidth==0.2.5
+whitenoise==6.2.0
+huey~=2.4.4
+```
