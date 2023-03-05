@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .api import api
-from leaderboards.views import Homepage
+from leaderboards.views import Homepage, create_temporary_user, SetEmailResetPassword
 
 urlpatterns = [
     path('', Homepage.as_view(), name='homepage'),
@@ -24,5 +24,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('admin/', admin.site.urls),
     path('api/', api.urls),
+    path('user-create/', create_temporary_user, name='temp-user-create'),
+    path('signup/', SetEmailResetPassword.as_view(), name='signup'),
     path('leaderboards/', include('leaderboards.urls')),
 ]

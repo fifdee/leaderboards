@@ -236,8 +236,7 @@
         </tbody>
     </table>
 
-    <h4 class="mt-3">Scores (best 50). <a class="text-decoration-none" href="{% url 'leaderboard-detail' object.pk %}">Refresh
-        to see changes.</a></h4>
+    <h4 class="mt-3">Scores (best 50).</h4>
 
     <table class="table">
         <thead>
@@ -252,32 +251,8 @@
             <th scope="col">Action</th>
         </tr>
         </thead>
-        <tbody>
-        {% for score in scores %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ score.name }}</td>
-                <td>{{ score.points }}</td>
-                <td>{{ score.time }}</td>
-                <td>{{ score.submitted_date|timesince }} ago</td>
-                <td>{{ score.extra }}</td>
-                <td>{{ score.uuid }}</td>
-                <td>
-                    <a href="{% url 'score-delete' score.pk %}">
-                        <button type="submit" class="btn btn-sm btn-outline-primary"
-                                onclick="this.disabled=true;">Delete
-                        </button>
-                    </a>
-                </td>
-                <td></td>
-            </tr>
-        {% empty %}
-            <tr>
-                <td colspan="8">No scores for this leaderboard yet!</td>
-            </tr>
-        {% endfor %}
-        <tr>
-        </tr>
+        <tbody id="scoresld">
+            {% include 'leaderboards/leaderboard_detail_scores.html' %}
         </tbody>
     </table>
 

@@ -16,22 +16,6 @@ import os
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-sentry_sdk.init(
-    dsn="https://d223893c17a54ed6bd587b12ad8a95df@o4504253466148864.ingest.sentry.io/4504253472768000",
-    integrations=[
-        DjangoIntegration(),
-    ],
-
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
-    traces_sample_rate=1.0,
-
-    # If you wish to associate users to errors (assuming you are using
-    # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
-)
-
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
@@ -46,8 +30,28 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 DEBUG = env('DEBUG')
 
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://d223893c17a54ed6bd587b12ad8a95df@o4504253466148864.ingest.sentry.io/4504253472768000",
+        integrations=[
+            DjangoIntegration(),
+        ],
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True
+    )
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
+
+TEMP_USERNAME_PART = env('TEMP_USERNAME_PART')
+TEMP_PASSWORD_PART = env('TEMP_PASSWORD_PART')
 
 ALLOWED_HOSTS = []
 
@@ -75,7 +79,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.facebook',
     'django_browser_reload',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -136,21 +140,11 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'leaderboards_project.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
+        'NAME': env('PGDATABASE'),
+        'USER': env('PGUSER'),
         'PASSWORD': env('PGPASSWORD'),
         'HOST': env('PGHOST'),
         'PORT': env('PGPORT'),
@@ -217,17 +211,22 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = env('EMAIL_USER_SES')
-DEFAULT_FROM_EMAIL = 'leaderboards@v45.org'
-EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD_SES')
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+if not DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = env('EMAIL_USER_SES')
+    DEFAULT_FROM_EMAIL = 'leaderboards@v45.org'
+    EMAIL_HOST_PASSWORD = env('EMAIL_PASSWORD_SES')
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = False
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 LOGIN_REDIRECT_URL = '/leaderboards/'
+LOGOUT_REDIRECT_URL = '/'
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

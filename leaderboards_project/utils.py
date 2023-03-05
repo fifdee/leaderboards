@@ -2,8 +2,17 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 
-from leaderboards.models import Leaderboard, Score
+from leaderboards.models import Leaderboard, Score, User
+from django.conf import settings
 
+
+def create_first_leaderboard(user):
+    Leaderboard.objects.create(
+        owner=user,
+        name='My first leaderboard',
+        public_key=get_random_id(),
+        private_key=get_random_id(),
+    )
 
 def get_random_id():
     import uuid

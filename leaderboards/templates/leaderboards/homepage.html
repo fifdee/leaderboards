@@ -11,9 +11,23 @@
                 request with provided private_key to submit scores.</p>
 
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <a href="{% url 'leaderboard-list' %}">
-                        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Your leaderboards</button>
-                    </a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'leaderboard-list' %}">
+                            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Your leaderboards</button>
+                        </a>
+
+                        <a href="{% url 'account_logout' %}">
+                            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Logout</button>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'temp-user-create' %}">
+                            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Try it</button>
+                        </a>
+
+                        <a href="{% url 'account_login' %}">
+                            <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Login</button>
+                        </a>
+                    {% endif %}
                 </div>
 
         </div>

@@ -11,5 +11,5 @@ from leaderboards.models import Leaderboard
 def leaderboard_expired():
     leaderboards = Leaderboard.objects.all()
     for leaderboard in leaderboards:
-        if now() - leaderboard.modified_date > datetime.timedelta(days=31):
+        if (now() - leaderboard.modified_date).days > 31:
             leaderboard.delete()

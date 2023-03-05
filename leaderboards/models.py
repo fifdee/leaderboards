@@ -6,7 +6,7 @@ from django.utils.timezone import now
 
 # Create your models here.
 class User(AbstractUser):
-    pass
+    temporary = models.BooleanField(default=True)
 
 
 class Leaderboard(models.Model):
@@ -58,4 +58,4 @@ def set_username(sender, instance, **kwargs):
 
 
 post_save.connect(update_modified, sender=Score)
-pre_save.connect(set_username, sender=User)
+# pre_save.connect(set_username, sender=User)

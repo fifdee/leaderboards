@@ -1,19 +1,63 @@
+from allauth.account.views import PasswordResetView
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth import login
 
-from leaderboards.forms import LeaderboardForm, FeedbackForm
-from leaderboards.models import Leaderboard, Score
-from leaderboards_project.utils import get_random_id, add_or_update_score
+from leaderboards.forms import LeaderboardForm, FeedbackForm, UserConvertForm
+from leaderboards.models import Leaderboard, Score, User
+from leaderboards.my_mixins import CheckIfUserConverted
+from leaderboards_project.utils import get_random_id, add_or_update_score, create_first_leaderboard
 
+
+def create_temporary_user(request):
+    username_part = settings.TEMP_USERNAME_PART
+    password_part = settings.TEMP_PASSWORD_PART
+
+    temp_users = User.objects.filter(username__contains=username_part)
+    next_id = temp_users.last().id + 1
+
+    username = f"{username_part}_{next_id}"
+    password = f"{password_part}_{next_id}"
+
+    user = User.objects.create_user(username=username, password=password)
+
+    login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
+
+    create_first_leaderboard(user)
+
+    return redirect('leaderboard-list')
+
+
+class SetEmailResetPassword(PasswordResetView):
+    form_class = UserConvertForm
+    template_name = 'account/convert.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        # it the user is not temporary - redirect
+        if not self.request.user.temporary:
+            return redirect('leaderboard-list')
+
+        return super(SetEmailResetPassword, self).dispatch(request, *args, **kwargs)
+    def form_valid(self, form):
+        email = form.cleaned_data["email"].lower()
+
+        if User.objects.filter(email=email).exists():
+            user_with_this_email = User.objects.get(email=email)
+            if self.request.user != user_with_this_email:
+                form.add_error('email', 'This e-mail is already taken.')
+                return super().form_invalid(form)
+
+        return super(SetEmailResetPassword, self).form_valid(form)
 
 class Homepage(generic.TemplateView):
     template_name = 'leaderboards/homepage.html'
 
 
-class LeaderboardList(LoginRequiredMixin, generic.ListView):
+class LeaderboardList(CheckIfUserConverted, LoginRequiredMixin, generic.ListView):
     template_name = 'leaderboards/leaderboard_list.html'
 
     def get_queryset(self):
@@ -154,14 +198,26 @@ class ScoreAdd(generic.View):
 
 
 class ScoreDelete(LoginRequiredMixin, generic.View):
-    def get(self, request, pk):
+    def get(self, request, pk, *args, **kwargs):
         score = get_object_or_404(Score, pk=pk)
         leaderboard_pk = score.leaderboard.pk
         if score.leaderboard.owner == request.user:
             score.delete()
         else:
             raise Http404()
-        return redirect('leaderboard-detail', pk=leaderboard_pk)
+        return render(request, template_name='leaderboards/leaderboard_detail_scores.html',
+                      context={'scores': Score.objects.filter(leaderboard__owner=self.request.user,
+                                                              leaderboard=Leaderboard.objects.get(
+                                                                  pk=leaderboard_pk)).order_by('-points')})
+
+
+class ScoresInLeaderboardDetails(LoginRequiredMixin, generic.View):
+    def get(self, request, leaderboard_pk):
+        print(f'leaderboard_pk:', leaderboard_pk)
+        return render(request, template_name='leaderboards/leaderboard_detail_scores.html',
+                      context={'scores': Score.objects.filter(leaderboard__owner=self.request.user,
+                                                              leaderboard=Leaderboard.objects.get(
+                                                                  pk=leaderboard_pk)).order_by('-points')})
 
 
 class FeedbackSend(generic.CreateView):
