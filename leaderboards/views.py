@@ -18,7 +18,10 @@ def create_temporary_user(request):
     password_part = settings.TEMP_PASSWORD_PART
 
     temp_users = User.objects.filter(username__contains=username_part)
-    next_id = temp_users.last().id + 1
+    if temp_users.count() > 0:
+        next_id = temp_users.last().id + 1
+    else:
+        next_id = 0
 
     username = f"{username_part}_{next_id}"
     password = f"{password_part}_{next_id}"
