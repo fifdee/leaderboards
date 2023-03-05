@@ -14,23 +14,24 @@ from leaderboards_project.utils import get_random_id, add_or_update_score, creat
 
 
 def create_temporary_user(request):
-    username_part = settings.TEMP_USERNAME_PART
-    password_part = settings.TEMP_PASSWORD_PART
+    if not request.user.is_authenticated:
+        username_part = settings.TEMP_USERNAME_PART
+        password_part = settings.TEMP_PASSWORD_PART
 
-    temp_users = User.objects.filter(username__contains=username_part)
-    if temp_users.count() > 0:
-        next_id = temp_users.last().id + 1
-    else:
-        next_id = 0
+        temp_users = User.objects.filter(username__contains=username_part)
+        if temp_users.count() > 0:
+            next_id = temp_users.last().id + 1
+        else:
+            next_id = 0
 
-    username = f"{username_part}_{next_id}"
-    password = f"{password_part}_{next_id}"
+        username = f"{username_part}_{next_id}"
+        password = f"{password_part}_{next_id}"
 
-    user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, password=password)
 
-    login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
+        login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
 
-    create_first_leaderboard(user)
+        create_first_leaderboard(user)
 
     return redirect('leaderboard-list')
 
