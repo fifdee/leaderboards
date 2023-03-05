@@ -14,7 +14,9 @@ from leaderboards_project.utils import get_random_id, add_or_update_score, creat
 
 
 def create_temporary_user(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated and not request.session.get('temp_user_created', None):
+        request.session['temp_user_created'] = True
+
         username_part = settings.TEMP_USERNAME_PART
         password_part = settings.TEMP_PASSWORD_PART
 
