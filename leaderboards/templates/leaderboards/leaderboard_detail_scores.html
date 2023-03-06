@@ -9,10 +9,11 @@
         <td>{{ score.uuid }}</td>
         <td>
             <form>
-                <button class="btn btn-sm btn-outline-primary" hx-get="{% url 'score-delete-by-hand' score.pk %}"
+                <button class="btn btn-sm btn-outline-primary" hx-post="{% url 'score-delete-by-hand' %}"
                         hx-target="#scoresld"
                         onclick="this.disabled=true;">Delete
                 </button>
+                <input type="hidden" name="pk" value="{{ score.pk }}">
             </form>
         </td>
         <td></td>

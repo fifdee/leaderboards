@@ -14,28 +14,42 @@ from leaderboards_project.utils import get_random_id, add_or_update_score, creat
 from threading import Lock
 
 
+def score_delete(request):
+   if request.method == 'POST':
+       score = get_object_or_404(Score, pk=request.POST['pk'])
+       leaderboard_pk = score.leaderboard.pk
+       if score.leaderboard.owner == request.user:
+           score.delete()
+       else:
+           raise Http404()
+       return render(request, template_name='leaderboards/leaderboard_detail_scores.html',
+                     context={'scores': Score.objects.filter(leaderboard__owner=request.user,
+                                                             leaderboard=Leaderboard.objects.get(
+                                                                 pk=leaderboard_pk)).order_by('-points')})
+
+
 def create_temporary_user(request):
-    if not request.user.is_authenticated and not request.session.get('temp_user_created', None):
-        request.session['temp_user_created'] = 'created'
+    if request.method == 'POST':
+        if not request.user.is_authenticated and not request.session.get('temp_user_created', None):
+            request.session['temp_user_created'] = 'created'
 
-        username_part = settings.TEMP_USERNAME_PART
-        password_part = settings.TEMP_PASSWORD_PART
+            username_part = settings.TEMP_USERNAME_PART
+            password_part = settings.TEMP_PASSWORD_PART
 
-        temp_users = User.objects.filter(username__contains=username_part)
-        if temp_users.count() > 0:
-            next_id = temp_users.last().id + 1
-        else:
-            next_id = 0
+            temp_users = User.objects.filter(username__contains=username_part)
+            if temp_users.count() > 0:
+                next_id = temp_users.last().id + 1
+            else:
+                next_id = 0
 
-        username = f"{username_part}_{next_id}"
-        password = f"{password_part}_{next_id}"
+            username = f"{username_part}_{next_id}"
+            password = f"{password_part}_{next_id}"
 
-        user = User.objects.create_user(username=username, password=password)
+            user = User.objects.create_user(username=username, password=password)
 
-        login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
+            login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
 
-        create_first_leaderboard(user)
-
+            create_first_leaderboard(user)
     return redirect('leaderboard-list')
 
 
@@ -204,27 +218,12 @@ class ScoreAdd(generic.View):
         return add_or_update_score(data, is_get_request=True)
 
 
-class ScoreDelete(LoginRequiredMixin, generic.View):
-    def get(self, request, pk, *args, **kwargs):
-        score = get_object_or_404(Score, pk=pk)
-        leaderboard_pk = score.leaderboard.pk
-        if score.leaderboard.owner == request.user:
-            score.delete()
-        else:
-            raise Http404()
-        return render(request, template_name='leaderboards/leaderboard_detail_scores.html',
-                      context={'scores': Score.objects.filter(leaderboard__owner=self.request.user,
-                                                              leaderboard=Leaderboard.objects.get(
-                                                                  pk=leaderboard_pk)).order_by('-points')})
-
-
 class ScoresInLeaderboardDetails(LoginRequiredMixin, generic.View):
-    def get(self, request, leaderboard_pk):
-        print(f'leaderboard_pk:', leaderboard_pk)
+    def post(self, request):
         return render(request, template_name='leaderboards/leaderboard_detail_scores.html',
                       context={'scores': Score.objects.filter(leaderboard__owner=self.request.user,
                                                               leaderboard=Leaderboard.objects.get(
-                                                                  pk=leaderboard_pk)).order_by('-points')})
+                                                                  pk=request.POST['pk'])).order_by('-points')})
 
 
 class FeedbackSend(generic.CreateView):
