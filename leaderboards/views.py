@@ -11,11 +11,12 @@ from leaderboards.forms import LeaderboardForm, FeedbackForm, UserConvertForm
 from leaderboards.models import Leaderboard, Score, User
 from leaderboards.my_mixins import CheckIfUserConverted
 from leaderboards_project.utils import get_random_id, add_or_update_score, create_first_leaderboard
+from threading import Lock
 
 
 def create_temporary_user(request):
     if not request.user.is_authenticated and not request.session.get('temp_user_created', None):
-        request.session['temp_user_created'] = True
+        request.session['temp_user_created'] = 'created'
 
         username_part = settings.TEMP_USERNAME_PART
         password_part = settings.TEMP_PASSWORD_PART
