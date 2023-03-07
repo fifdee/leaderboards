@@ -33,7 +33,8 @@
 
         {% else %}
             <p class="small">If you have not created an account yet, then
-                <a class="" href="{% url 'temp-user-create' %}">try it</a> first!</p>
+                <button class="btn btn-outline-primary mb-1" hx-post="{% url 'temp-user-create' %}"
+                                     hx-target="body" onclick="this.disabled=true;">try it</button> first!</p>
         {% endif %}
 
         <form class="login form-text" method="POST" action="{% url 'account_login' %}">
