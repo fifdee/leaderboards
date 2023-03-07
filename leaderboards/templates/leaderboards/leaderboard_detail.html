@@ -237,7 +237,7 @@
     </table>
 
     <form>
-        <h4 class="mt-3" hx-post="{% url 'scores-refresh-in-list' %}" hx-target="#scoresld" hx-trigger="mouseenter">Scores (best 50).</h4>
+        <h4 class="mt-3" hx-post="{% url 'scores-refresh-in-list' %}" hx-target="#scoresld" hx-trigger="every 3s">Scores (best 50).</h4>
         <input type="hidden" name="pk" value="{{ object.pk }}">
     </form>
 
