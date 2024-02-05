@@ -57,5 +57,5 @@ def set_username(sender, instance, **kwargs):
     instance.username = username
 
 
-post_save.connect(update_modified, sender=Score)
+    post_save.connect(update_modified, sender=Score)
 # pre_save.connect(set_username, sender=User)
