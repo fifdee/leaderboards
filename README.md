@@ -1,6 +1,5 @@
 # Leaderboards - Django app with RESTful functionality to add and retrieve scores.
 ## Sample use case: mobile games which need to store players highscores online.
-### Live: https://leaderboards.v45.org/
 ##### Requirements:
 ```
 amqp==5.1.1
